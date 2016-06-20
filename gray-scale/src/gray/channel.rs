@@ -27,7 +27,7 @@ impl Channel{
 
 impl Gray for Channel{
     fn gray(&self, red: u8, blue: u8, green: u8)-> (u8, u8, u8){
-        let color = match self.selector{
+        let base = match self.selector{
             Color::Red => {
                 red
             }
@@ -38,6 +38,7 @@ impl Gray for Channel{
                 green
             }
         };
+        let color = base as f32 / 3.0;
         (color as u8, color as u8, color as u8)
     }
 }

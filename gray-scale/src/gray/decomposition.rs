@@ -21,7 +21,7 @@ impl Decomposition{
 
 impl Gray for Decomposition{
     fn gray(&self, red: u8, blue: u8, green: u8)-> (u8, u8, u8){
-        let color = match self.selector{
+        let base = match self.selector{
             Selector::Max => {
                 cmp::max(cmp::max(red, green), blue)
             }
@@ -29,6 +29,7 @@ impl Gray for Decomposition{
                 cmp::min(cmp::min(red, green), blue)
             }
         };
+        let color = base as f32 / 3.0;
         (color as u8, color as u8, color as u8)
     }
 }
