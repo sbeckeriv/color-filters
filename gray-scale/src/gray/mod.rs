@@ -22,11 +22,12 @@ pub fn make_gray<T: Gray>(grayer: T, file_name: &str, image: &image::ImageBuffer
         ]);
     }
 
-    let ppm_file = format!("{}.ppm",
+    let out_file = format!("{}.jpg",
                            file_name);
 
-    let ref mut fout = File::create(&Path::new(&ppm_file)).unwrap();
-    image::ImageRgb8(imgbuf.clone()).save(fout, image::PPM)
+    let ref mut fout = File::create(&Path::new(&out_file)).unwrap();
+    image::ImageRgb8(imgbuf.clone()).save(fout, image::JPEG)
+
 }
 pub use self::luma::Luma;
 pub use self::standard::Standard;
