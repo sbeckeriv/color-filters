@@ -8,7 +8,7 @@ impl Standard{
         Standard{ gamma: gamma}
     }
 }
-use std::u8::MAX;
+
 impl Gray for Standard{
     fn gray(&self, red: u8, blue: u8, green: u8)-> (u8, u8, u8){
         let color = (red as u32 + green as u32 + blue as u32) as f32 /3.0;

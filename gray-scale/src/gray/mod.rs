@@ -30,5 +30,7 @@ pub fn make_gray<T: Gray>(grayer: T, file_name: &str, image: &image::ImageBuffer
 }
 pub use self::luma::Luma;
 pub use self::standard::Standard;
+pub use self::desaturation::Desaturation;
+mod desaturation;
 mod standard;
 mod luma;
