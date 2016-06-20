@@ -2,7 +2,7 @@ extern crate image;
 use std::env;
 use std::path::Path;
 mod gray;
-use gray::{Luma, Standard, Gray, make_gray};
+use gray::{Luma, Standard, make_gray};
 fn main() {
     let file = env::args().nth(1).unwrap();
     let img = image::open(&Path::new(&file)).unwrap().to_rgb();
