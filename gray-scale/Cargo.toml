@@ -6,3 +6,7 @@ authors = ["Stephen Becker IV <github@deathbyescalator.com>"]
 [dependencies]
 image = "*"
 simple_parallel = "0.3"
+
+[dependencies.rusoto]
+features = ["s3"]
+version = "*"
