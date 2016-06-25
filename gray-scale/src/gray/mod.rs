@@ -3,11 +3,11 @@ use image::GenericImage;
 use std::fs::File;
 use std::path::Path;
 
-pub trait Gray {
+pub trait Gray: Send + Sync{
     fn gray(&self, red: u8, blue: u8, green: u8) -> (u8,u8,u8);
 }
-
-pub fn make_gray<T: Gray>(grayer: T, file_name: &str, image: &image::ImageBuffer<image::Rgb<u8>, Vec<u8>>) -> Result<(), image::ImageError>{
+/*
+pub fn make_gray<T: Gray>(grayer: Box<T>, file_name: &str, image: &image::ImageBuffer<image::Rgb<u8>, Vec<u8>>) -> Result<(), image::ImageError>{
     let (image_x, image_y) = image.dimensions();
     let mut imgbuf: image::RgbImage = image::ImageBuffer::new(image_x, image_y);
     for (x, y, pixel) in imgbuf.enumerate_pixels_mut() {
@@ -27,8 +27,8 @@ pub fn make_gray<T: Gray>(grayer: T, file_name: &str, image: &image::ImageBuffer
 
     let ref mut fout = File::create(&Path::new(&out_file)).unwrap();
     image::ImageRgb8(imgbuf.clone()).save(fout, image::JPEG)
-
 }
+*/
 pub use self::luma::Luma;
 pub use self::standard::Standard;
 pub use self::desaturation::Desaturation;
