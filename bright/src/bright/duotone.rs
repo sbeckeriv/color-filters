@@ -17,7 +17,7 @@ impl Bright for DuoTone{
         match (green as f32) / 255.0{
             0.0 ... 0.33 => { (red, 0, 0) }
             0.33 ... 0.66 => { (red, blue, 0) }
-            _  => { (0, blue, green)}
+            _  => { (0, blue, 0)}
         }
     }
 }
