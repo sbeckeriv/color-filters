@@ -7,14 +7,14 @@ use rusoto::{AwsError, EnvironmentProvider, Region};
 use rusoto::s3;
 use rustc_serialize::base64::{ToBase64, STANDARD};
 
-mod gray;
+mod bright;
 
 use std::env;
 use std::sync::Arc;
 use std::path::Path;
 use image::GenericImage;
-use gray::{Decomposition, Desaturation, Channel, Layers,
-Luma, Standard, Gray};
+use bright::{Standard, Bright, Channel, ChannelZero,
+DuoTone};
 use std::io::prelude::*;
 use std::io::BufReader;
 use std::fs::File;
@@ -25,25 +25,27 @@ fn main() {
     let img = image::open(&Path::new(&file)).unwrap().to_rgb();
     let mut processors = Vec::new();
     processors.push(Processor::new(Box::new(Standard::new(0)),
-    format!("{}-avg", file)));
-    processors.push(Processor::new( Box::new(Desaturation::new()),
-    format!("{}-desat", file)));
-    processors.push(Processor::new( Box::new(Decomposition::max()),
-    format!("{}decomp_max", file)));
-    processors.push(Processor::new( Box::new(Decomposition::min()),
-    format!("{}_decomp_min", file)));
-    processors.push(Processor::new(Box::new(Luma::new()),
-    format!("{}_luma", file)));
-    processors.push(Processor::new(Box::new(Channel::red()),
-    format!("{}_red", file)));
-    processors.push(Processor::new(Box::new(Channel::green()),
-    format!("{}_green", file)));
-    processors.push(Processor::new(Box::new(Channel::blue()),
-    format!("{}_blue", file)));
-    processors.push(Processor::new(Box::new(Layers::new(16)),
-    format!("{}_layer_16", file)));
-    processors.push(Processor::new(Box::new(Layers::new(160)),
-    format!("{}_layer_160", file)));
+    format!("{}-0", file)));
+    processors.push(Processor::new(Box::new(Standard::new(100)),
+    format!("{}-100", file)));
+    processors.push(Processor::new(Box::new(Standard::new(0-100)),
+    format!("{}-neg-100", file)));
+    processors.push(Processor::new(Box::new(Channel::red(10)),
+    format!("{}-red-10", file)));
+    processors.push(Processor::new(Box::new(Channel::blue(10)),
+    format!("{}-blue-10", file)));
+    processors.push(Processor::new(Box::new(Channel::green(10)),
+    format!("{}-green-10", file)));
+
+    processors.push(Processor::new(Box::new(ChannelZero::red(0)),
+    format!("{}-red-zero-10", file)));
+    processors.push(Processor::new(Box::new(ChannelZero::blue(0)),
+    format!("{}-blue-zero-10", file)));
+    processors.push(Processor::new(Box::new(ChannelZero::green(0)),
+    format!("{}-green-zero-10", file)));
+
+    processors.push(Processor::new(Box::new(DuoTone::new()),
+    format!("{}-duotone", file)));
 
     let mut pool = simple_parallel::Pool::new(5);
     pool.for_(processors.iter(), |processor| {
@@ -53,13 +55,12 @@ fn main() {
         let mut imgbuf: image::RgbImage = image::ImageBuffer::new(image_x, image_y);
         for (x, y, pixel) in imgbuf.enumerate_pixels_mut() {
             let org_pixel = image.get_pixel(x, y);
-            let (r,g,b) = processor.process.gray(org_pixel[0],
+            let (r,b,g) = processor.process.lighten(org_pixel[0],
                                                  org_pixel[1],
                                                  org_pixel[2]);
-            let color = r as u32 +g as u32 +b as u32;
-            *pixel = image::Rgb([color as u8,
-                                color as u8,
-                                color as u8
+            *pixel = image::Rgb([r as u8,
+                                b as u8,
+                                g as u8
             ]);
         }
         let name = file_name.replace(".","-");
@@ -91,11 +92,11 @@ fn main() {
 }
 
 struct Processor{
-    pub process: Box<Gray>,
+    pub process: Box<Bright>,
     pub file_base: String
 }
 impl Processor{
-    fn new(process: Box<Gray>, name: String) -> Self{
+    fn new(process: Box<Bright>, name: String) -> Self{
         Processor{ process: process, file_base: name}
     }
 }
