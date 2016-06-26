@@ -1,9 +1,11 @@
 extern crate image;
 extern crate simple_parallel;
 extern crate rusoto;
+extern crate rustc_serialize;
 #[macro_use]
 use rusoto::{AwsError, EnvironmentProvider, Region};
-use rusoto::s3::S3Helper;
+use rusoto::s3;
+use rustc_serialize::base64::{ToBase64, STANDARD};
 
 mod gray;
 
@@ -16,6 +18,7 @@ Luma, Standard, Gray};
 use std::io::prelude::*;
 use std::io::BufReader;
 use std::fs::File;
+
 
 fn main() {
     let file = env::args().nth(1).unwrap();
@@ -44,7 +47,7 @@ fn main() {
 
     let mut pool = simple_parallel::Pool::new(5);
     pool.for_(processors.iter(), |processor| {
-        let mut s3 = S3Helper::new(EnvironmentProvider::new(), Region::UsEast1);
+        let mut s3 = s3::S3Client::new(EnvironmentProvider::new(), Region::UsEast1);
         let file_name =  &processor.file_base;
         let image= &img;
         let (image_x, image_y) = image.dimensions();
@@ -72,8 +75,13 @@ fn main() {
         let file = File::open(&path).unwrap();
         let mut reader = BufReader::new(file);
         let bytes: Vec<u8> = reader.bytes().map(|b| b.unwrap()).collect();
-        s3.put_object("becker-rust-lambda",&clean_name, &bytes);
-
+ 		let mut request = s3::PutObjectRequest::default();
+        request.key = clean_name.to_string();
+        request.bucket = "becker-rust-lambda".to_string();
+        request.body = Some(&bytes);
+        request.content_type = Some("image/jpeg".to_string());
+        request.acl = Some(s3::CannedAcl::PublicRead);
+		s3.put_object(&request);
     });
 }
 

@@ -3,7 +3,9 @@ name = "gray-scale"
 version = "0.1.0"
 dependencies = [
  "image 0.10.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "openssl 0.7.13 (registry+https://github.com/rust-lang/crates.io-index)",
  "rusoto 0.14.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "rustc-serialize 0.3.19 (registry+https://github.com/rust-lang/crates.io-index)",
  "simple_parallel 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
