@@ -45,7 +45,7 @@ fn main() {
         let bytes: Vec<u8> = reader.bytes().map(|b| b.unwrap()).collect();
 
         let mut s3 = s3::S3Client::new(EnvironmentProvider::new(), Region::UsEast1);
- 		let mut request = s3::PutObjectRequest::default();
+        let mut request = s3::PutObjectRequest::default();
         request.key = clean_name.to_string();
         request.bucket = "becker-rust-lambda".to_string();
         request.body = Some(&bytes);
@@ -55,7 +55,7 @@ fn main() {
         met.insert("becker".to_string(),"image/jpeg".to_string());
         request.metadata = Some(met);
         request.acl = Some(s3::CannedAcl::PublicRead);
-		s3.put_object(&request);
+        s3.put_object(&request);
     });
 }
 
@@ -64,12 +64,18 @@ fn filters(file: &str) ->Vec<Processor>{
     processors.push(Processor::new(Box::new(FilterGrid::new()),
     format!("{}-org", file)));
 
-        let mut v = Vec::new();
-        v.push(vec![0.0,0.2,0.0]);
-        v.push(vec![0.2,0.2,0.2]);
-        v.push(vec![0.0,0.2,0.0]);
+    let mut v = Vec::new();
+    v.push(vec![0.0,0.2,0.0]);
+    v.push(vec![0.2,0.2,0.2]);
+    v.push(vec![0.0,0.2,0.0]);
     processors.push(Processor::new(Box::new(FilterGrid::filter(v)),
     format!("{}-2", file)));
+    let mut v = Vec::new();
+    v.push(vec![0.0-1.0,0.0-1.0,0.0-1.0]);
+    v.push(vec![0.0-1.0,8.0,0.0-1.0]);
+    v.push(vec![0.0-1.0,0.0-1.0,0.0-1.0]);
+    processors.push(Processor::new(Box::new(FilterGrid::filter(v)),
+    format!("{}-edges", file)));
     processors
 }
 
