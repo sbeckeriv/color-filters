@@ -3,7 +3,7 @@ extern crate simple_parallel;
 extern crate rusoto;
 extern crate rustc_serialize;
 #[macro_use]
-use rusoto::{AwsError, EnvironmentProvider, Region};
+use rusoto::{AwsError, ProvideAwsCredentials, EnvironmentProvider, Region, DefaultCredentialsProvider};
 use rusoto::s3;
 use rustc_serialize::base64::{ToBase64, STANDARD};
 
@@ -43,8 +43,8 @@ fn main() {
         let file = File::open(&path).unwrap();
         let mut reader = BufReader::new(file);
         let bytes: Vec<u8> = reader.bytes().map(|b| b.unwrap()).collect();
-
-        let mut s3 = s3::S3Client::new(EnvironmentProvider::new(), Region::UsEast1);
+        let credentials = DefaultCredentialsProvider::new().unwrap();
+        let mut s3 = s3::S3Client::new(credentials, Region::UsEast1);
         let mut request = s3::PutObjectRequest::default();
         request.key = clean_name.to_string();
         request.bucket = "becker-rust-lambda".to_string();
