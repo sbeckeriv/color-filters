@@ -5,7 +5,7 @@ authors = ["Stephen Becker IV <github@deathbyescalator.com>"]
 
 [dependencies]
 image = "*"
-simple_parallel = "0.3"
+simple_parallel = {git = 'https://github.com/sbeckeriv/simple_parallel.git',  branch ="master"}
 openssl = "0.7.9"
 rustc-serialize = "0.3.19"
 [dependencies.rusoto]

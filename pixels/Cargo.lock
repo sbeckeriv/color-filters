@@ -6,7 +6,7 @@ dependencies = [
  "openssl 0.7.14 (registry+https://github.com/rust-lang/crates.io-index)",
  "rusoto 0.15.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "rustc-serialize 0.3.19 (registry+https://github.com/rust-lang/crates.io-index)",
- "simple_parallel 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "simple_parallel 0.3.1 (git+https://github.com/sbeckeriv/simple_parallel.git)",
 ]
 
 [[package]]
@@ -75,7 +75,7 @@ dependencies = [
 
 [[package]]
 name = "crossbeam"
-version = "0.1.6"
+version = "0.2.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
@@ -554,10 +554,10 @@ dependencies = [
 
 [[package]]
 name = "simple_parallel"
-version = "0.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
+version = "0.3.1"
+source = "git+https://github.com/sbeckeriv/simple_parallel.git#c0c995bd95f327fee153a6f3df0ea227de270aea"
 dependencies = [
- "crossbeam 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)",
+ "crossbeam 0.2.9 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
