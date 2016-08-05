@@ -2,6 +2,8 @@ extern crate image;
 extern crate simple_parallel;
 extern crate rusoto;
 extern crate rustc_serialize;
+extern crate curl;
+extern crate time;
 #[macro_use]
 use rusoto::{AwsError, ProvideAwsCredentials, EnvironmentProvider, Region, DefaultCredentialsProvider};
 use rusoto::s3;
@@ -17,9 +19,33 @@ use filters::{Filter, FilterGrid};
 use std::io::prelude::*;
 use std::io::BufReader;
 use std::fs::File;
+use curl::easy::Easy;
+fn timestamp () -> f64 {
+    let timespec = time::get_time();
+    // 1459440009.113178
+    let mills: f64 = timespec.sec as f64 + (timespec.nsec as f64 / 1000.0 / 1000.0 / 1000.0 );
+    mills
+}
+fn download(url: &str) -> String{
+    let p =format!("{}.jpg", timestamp());
+    {
+        let path = Path::new(&p);
+        let display = path.display();
+        // Open a file in write-only mode, returns `io::Result<File>`
+        let mut file = File::create(&path).unwrap();
 
+        let mut easy = Easy::new();
+        easy.url(&url).unwrap();
+        easy.write_function(move |data| {
+            Ok(file.write(data).unwrap())
+        }).unwrap();
+        easy.perform().unwrap();
+    }
+    p
+}
 fn main() {
-    let file = env::args().nth(1).unwrap();
+    let file_url = env::args().nth(1).unwrap();
+    let file = download(&file_url);
     let image = image::open(&Path::new(&file)).unwrap().to_rgb();
     let mut processors = filters(&file);
     let mut pool = simple_parallel::Pool::new(5);
@@ -57,6 +83,7 @@ fn main() {
         request.acl = Some(s3::CannedAcl::PublicRead);
         s3.put_object(&request);
     });
+    std::fs::remove_file(&file);
 }
 
 fn filters(file: &str) ->Vec<Processor>{
