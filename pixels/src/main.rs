@@ -59,6 +59,7 @@ fn main() {
         }
         let name = file_name.replace(".","-");
         let clean_name = format!("{}.jpg", name);
+        println!("{}", clean_name);
 
         let out_file = format!("{}.jpg",
                                file_name);
