@@ -1,0 +1,11 @@
+$ curl -sSf https://static.rust-lang.org/rustup.sh | sh -s -- --channel=nightly
+<checkout code>
+$ cargo build --release
+$ cp target/release/images  image
+$ zip pixels.zip main.js image && cp pixels.zip ../../
+updating: main.js (deflated 36%)
+updating: image (deflated 66%)
+$
+
+<local>
+ scp -i "image3.pem" ec2-user@54.197.87.241:~/pixels.zip .
