@@ -95,26 +95,43 @@ fn filters(file: &str) ->Vec<Processor>{
     v.push(vec![0.2,1.2,0.2]);
     v.push(vec![0.0,0.2,1.0]);
     processors.push(Processor::new(Box::new(FilterGrid::filter(v)),
-    format!("{}-2-mot", file)));
+    format!("{}-blur-mot", file)));
 
     let mut v = Vec::new();
     v.push(vec![0.0,0.2,0.0]);
     v.push(vec![0.2,0.2,0.2]);
     v.push(vec![0.0,0.2,0.0]);
     processors.push(Processor::new(Box::new(FilterGrid::filter(v)),
-    format!("{}-2", file)));
+    format!("{}-blur", file)));
+
     let mut v = Vec::new();
     v.push(vec![0.0-1.0,0.0-1.0,0.0-1.0]);
     v.push(vec![0.0-1.0,8.0,0.0-1.0]);
     v.push(vec![0.0-1.0,0.0-1.0,0.0-1.0]);
     processors.push(Processor::new(Box::new(FilterGrid::filter(v)),
     format!("{}-edges", file)));
+
     let mut v = Vec::new();
     v.push(vec![0.0-1.0,0.0-1.0,0.0-1.0]);
     v.push(vec![0.0-1.0,15.0,0.0-2.0]);
     v.push(vec![0.0-1.0,0.0-2.0,0.0-2.0]);
     processors.push(Processor::new(Box::new(FilterGrid::filter(v)),
     format!("{}-sharpen", file)));
+
+    let mut v = Vec::new();
+    v.push(vec![1.0,1.0    ,1.0]);
+    v.push(vec![1.0,0.0-7.0,1.0]);
+    v.push(vec![1.0,1.0    ,1.0]);
+    processors.push(Processor::new(Box::new(FilterGrid::filter(v)),
+    format!("{}-edges-excessively", file)));
+
+    let mut v = Vec::new();
+    v.push(vec![0.0-1.0,0.0-1.0,0.0-1.0]);
+    v.push(vec![0.0-1.0,0.0-0.0,0.0+1.0]);
+    v.push(vec![0.0+0.0,0.0+1.0,0.0+1.0]);
+    processors.push(Processor::new(Box::new(FilterGrid::filter(v)),
+    format!("{}-boss", file)));
+
     processors
 }
 
