@@ -83,7 +83,7 @@ fn main() {
         request.metadata = Some(met);
         request.acl = Some(s3::CannedAcl::PublicRead);
         s3.put_object(&request);
-println!("{:?}",out_file);
+        println!("{:?}", clean_name);
     });
     std::fs::remove_file(&file);
 }
