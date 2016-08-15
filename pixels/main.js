@@ -14,7 +14,7 @@ exports.handler = function(event, context) {
     {env:env},
     (error, stdout, stderr) => {
       if (error) {
-        context.fail({message: error});
+        context.fail(JSON.stringify({"message": error.message}));
       }else{
         context.succeed({ "images": stdout.replace(/"/g,"").split("\n")});
       }
