@@ -27,7 +27,7 @@ fn timestamp () -> f64 {
     mills
 }
 fn download(url: &str) -> String{
-    let p =format!("{}.jpg", timestamp());
+    let p =format!("/tmp/{}.jpg", timestamp());
     {
         let path = Path::new(&p);
         let display = path.display();
@@ -59,7 +59,7 @@ fn main() {
         }
         let name = file_name.replace(".","-");
         let clean_name = format!("{}.jpg", name);
-        println!("{}", clean_name);
+        //println!("{}", clean_name);
 
         let out_file = format!("{}.jpg",
                                file_name);
@@ -83,6 +83,7 @@ fn main() {
         request.metadata = Some(met);
         request.acl = Some(s3::CannedAcl::PublicRead);
         s3.put_object(&request);
+println!("{:?}",out_file);
     });
     std::fs::remove_file(&file);
 }
