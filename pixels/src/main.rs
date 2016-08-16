@@ -83,7 +83,7 @@ fn main() {
         request.metadata = Some(met);
         request.acl = Some(s3::CannedAcl::PublicRead);
         s3.put_object(&request);
-        println!("https://s3.amazonaws.com/becker-rust-lambda/{:?}", clean_name);
+        println!("https://s3.amazonaws.com/becker-rust-lambda/{}", clean_name);
     });
     std::fs::remove_file(&file);
 }
@@ -94,42 +94,44 @@ fn filters(file: &str) ->Vec<Processor>{
     v.push(vec![1.0,0.2,0.0]);
     v.push(vec![0.2,1.2,0.2]);
     v.push(vec![0.0,0.2,1.0]);
-    processors.push(Processor::new(Box::new(FilterGrid::filter(v)),
+    processors.push(Processor::new(Box::new(FilterGrid::filter(v, 1.0/4.0)),
     format!("{}-blur-mot", file)));
 
     let mut v = Vec::new();
     v.push(vec![0.0,0.2,0.0]);
     v.push(vec![0.2,0.2,0.2]);
     v.push(vec![0.0,0.2,0.0]);
-    processors.push(Processor::new(Box::new(FilterGrid::filter(v)),
+    processors.push(Processor::new(Box::new(FilterGrid::filter(v,1.0)),
     format!("{}-blur", file)));
 
     let mut v = Vec::new();
     v.push(vec![0.0-1.0,0.0-1.0,0.0-1.0]);
     v.push(vec![0.0-1.0,8.0,0.0-1.0]);
     v.push(vec![0.0-1.0,0.0-1.0,0.0-1.0]);
-    processors.push(Processor::new(Box::new(FilterGrid::filter(v)),
+    processors.push(Processor::new(Box::new(FilterGrid::filter(v,1.0)),
     format!("{}-edges", file)));
 
     let mut v = Vec::new();
     v.push(vec![0.0-1.0,0.0-1.0,0.0-1.0]);
-    v.push(vec![0.0-1.0,15.0,0.0-2.0]);
+    v.push(vec![0.0-1.0,   15.0,0.0-2.0]);
     v.push(vec![0.0-1.0,0.0-2.0,0.0-2.0]);
-    processors.push(Processor::new(Box::new(FilterGrid::filter(v)),
+    processors.push(Processor::new(Box::new(FilterGrid::filter(v,1.0/4.0)),
     format!("{}-sharpen", file)));
 
     let mut v = Vec::new();
     v.push(vec![1.0,1.0    ,1.0]);
     v.push(vec![1.0,0.0-7.0,1.0]);
     v.push(vec![1.0,1.0    ,1.0]);
-    processors.push(Processor::new(Box::new(FilterGrid::filter(v)),
+    processors.push(Processor::new(Box::new(FilterGrid::filter(v,1.0)),
     format!("{}-edges-excessively", file)));
 
     let mut v = Vec::new();
-    v.push(vec![0.0-1.0,0.0-1.0,0.0-1.0]);
-    v.push(vec![0.0-1.0,0.0-0.0,0.0+1.0]);
-    v.push(vec![0.0+0.0,0.0+1.0,0.0+1.0]);
-    processors.push(Processor::new(Box::new(FilterGrid::filter(v)),
+    v.push(vec![0.0-2.0,0.0-1.0,0.0-0.0]);
+    v.push(vec![0.0-1.0,0.0+1.0,0.0+1.0]);
+    v.push(vec![0.0+0.0,0.0+1.0,0.0+2.0]);
+    let mut f = FilterGrid::filter(v,1.0);
+    f.bias = 0.0;
+    processors.push(Processor::new(Box::new(f),
     format!("{}-boss", file)));
 
     processors

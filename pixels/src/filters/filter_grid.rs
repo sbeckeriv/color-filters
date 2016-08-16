@@ -17,8 +17,8 @@ impl FilterGrid{
         FilterGrid{ filter: v, bias: 0.0, factor: 1.0 }
     }
 
-    pub fn filter(v: Vec<Vec<f32>>) -> Self{
-        FilterGrid{ filter: v, bias: 0.0, factor: 1.0 }
+    pub fn filter(v: Vec<Vec<f32>>, factor: f32) -> Self{
+        FilterGrid{ filter: v, bias: 0.0, factor: factor}
     }
 }
 
@@ -34,8 +34,8 @@ impl Filter for FilterGrid{
         let x_offset = (filter_width as f32 / 2.0) as u32;
         for filterY in (0..(filter_height) as u32){
             for filterX in (0..(filter_width) as u32){
-                let imageX = (x - x_offset + filterX + w) % w;
-                let imageY = (y - y_offset + filterY + h) % h;
+                let imageX = (w+x - x_offset + filterX ) % w;
+                let imageY = (h+y - y_offset + filterY ) % h;
                 let org_pixel = image.get_pixel(imageX, imageY);
                 let filter_y: &Vec<f32> = self.filter.get(filterY as usize).unwrap();
                 let filter_spot: &f32 = filter_y.get(filterX as usize).unwrap();
@@ -45,9 +45,9 @@ impl Filter for FilterGrid{
 
             }
         }
-        r = self.factor * r + self.bias;
-        b = self.factor * b + self.bias;
-        g = self.factor * g + self.bias;
+        r = (self.factor * r + self.bias);
+        b = (self.factor * b + self.bias);
+        g = (self.factor * g + self.bias);
         if r< 0.0{
             r=0.0;
         }else if r>255.0 {
